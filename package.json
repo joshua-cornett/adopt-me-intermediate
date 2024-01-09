@@ -1,7 +1,6 @@
 {
   "name": "complete-intro-to-react-v8",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
@@ -30,5 +29,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.1"
-  }
+  },
+  "description": ""
 }

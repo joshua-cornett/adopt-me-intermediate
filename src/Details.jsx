@@ -1,26 +1,22 @@
-import { useParams } from "react-router-dom";
+import { useState, useContext } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import AdoptedPetContext from "./AdoptedPetContext";
+import ErrorBoundary from "./ErrorBoundary";
 import Carousel from "./Carousel";
 import fetchPet from "./fetchPet";
+import Modal from "./Modal";
 
 const Details = () => {
+  const [showModal, setShowModal] = useState(false);
+  //programatically reroute
+  const navigate = useNavigate();
+  // eslint-disable-next-line no-unused-vars
+  const [_, setAdoptedPet] = useContext(AdoptedPetContext);
   const { id } = useParams();
-  //this is part of the toolset that useQuery provides
-  //we provide a unique key (["details", id])
-  //  and fetchPet only runs if it isn't already cached
   const results = useQuery(["details", id], fetchPet);
 
-  //Additional error handling, though fetchPet has it's own throw
-  //  useful to tell user about it
-
-  if (results.isError) {
-    return <h2>Uh oh...problem loading pet 😥</h2>;
-  }
-
-  //NOTE: You cannot await in a render function
-
   if (results.isLoading) {
-    //NOTE: The emoji vscode shortcut is "Win + ."
     return (
       <div className="loading-pane">
         <h2 className="loader">🌀</h2>
@@ -35,14 +31,36 @@ const Details = () => {
       <Carousel images={pet.images} />
       <div>
         <h1>{pet.name}</h1>
-        <h2>
-          {pet.animal} – {pet.breed} – {pet.city}, {pet.state}
-          <button>Adopt {pet.name}</button>
-          <p>{pet.description}</p>
-        </h2>
+        <h2>{`${pet.animal} — ${pet.breed} — ${pet.city}, ${pet.state}`}</h2>
+        <button onClick={() => setShowModal(true)}>Adopt {pet.name}</button>
+        <p>{pet.description}</p>
+        {showModal ? (
+          <Modal>
+            <div>
+              <h1>Would you like to adopt {pet.name}?</h1>
+              <div className="buttons">
+                <button
+                  onClick={() => {
+                    setAdoptedPet(pet);
+                    navigate("/");
+                  }}
+                >
+                  Yes
+                </button>
+                <button onClick={() => setShowModal(false)}>No</button>
+              </div>
+            </div>
+          </Modal>
+        ) : null}
       </div>
     </div>
   );
 };
 
-export default Details;
+export default function DetailsErrorBoundary(props) {
+  return (
+    <ErrorBoundary>
+      <Details {...props} />
+    </ErrorBoundary>
+  );
+}

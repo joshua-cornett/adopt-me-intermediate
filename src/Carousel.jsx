@@ -1,7 +1,5 @@
 import { Component } from "react";
 
-//Important: Class components must always extend from React Component
-
 class Carousel extends Component {
   state = {
     active: 0,
@@ -11,31 +9,28 @@ class Carousel extends Component {
     images: ["http://pets-images.dev-apis.com/pets/none.jpg"],
   };
 
-  handleIndexClick = (e) => {
+  handleIndexClick = (event) => {
     this.setState({
-      active: +e.target.dataset.index,
+      active: +event.target.dataset.index,
     });
-    //e.target.className = "active";
   };
 
-  //Important: Class components must always have a render function
   render() {
     const { active } = this.state;
     const { images } = this.props;
-
     return (
       <div className="carousel">
-        <img src={images[active]} alt="animal hero" />
+        <img src={images[active]} alt="animal" />
         <div className="carousel-smaller">
           {images.map((photo, index) => (
             // eslint-disable-next-line
             <img
-              onClick={this.handleIndexClick}
-              data-index={index}
               key={photo}
               src={photo}
               className={index === active ? "active" : ""}
               alt="animal thumbnail"
+              onClick={this.handleIndexClick}
+              data-index={index}
             />
           ))}
         </div>
