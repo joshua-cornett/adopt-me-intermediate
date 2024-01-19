@@ -1,22 +1,26 @@
-import { useContext, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import Results from "./Results";
-import AdoptedPetContext from "./AdoptedPetContext";
-import useBreedList from "./useBreedList";
-import fetchSearch from "./fetchSearch";
-const ANIMALS = ["bird", "cat", "dog", "rabbit", "reptile"];
+import { useContext, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import Results from './Results';
+import AdoptedPetContext from './AdoptedPetContext';
+import useBreedList from './useBreedList';
+import fetchSearch from './fetchSearch';
+const ANIMALS = ['bird', 'cat', 'dog', 'rabbit', 'reptile'];
 
 const SearchParams = () => {
   const [requestParams, setRequestParams] = useState({
-    location: "",
-    animal: "",
-    breed: "",
+    location: '',
+    animal: '',
+    breed: '',
   });
   const [adoptedPet] = useContext(AdoptedPetContext);
-  const [animal, setAnimal] = useState("");
+  const [animal, setAnimal] = useState('');
   const [breeds] = useBreedList(animal);
 
-  const results = useQuery(["search", requestParams], fetchSearch);
+  const queryKey = ['search', requestParams];
+  const queryFn = fetchSearch;
+
+  const results = useQuery({ queryKey, queryFn });
+
   const pets = results?.data?.pets ?? [];
 
   return (
@@ -26,9 +30,9 @@ const SearchParams = () => {
           e.preventDefault();
           const formData = new FormData(e.target);
           const obj = {
-            animal: formData.get("animal") ?? "",
-            breed: formData.get("breed") ?? "",
-            location: formData.get("location") ?? "",
+            animal: formData.get('animal') ?? '',
+            breed: formData.get('breed') ?? '',
+            location: formData.get('location') ?? '',
           };
           setRequestParams(obj);
         }}
