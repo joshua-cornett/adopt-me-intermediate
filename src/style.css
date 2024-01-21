@@ -1,3 +1,17 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* These are named somewhat intuitively */
+
+@tailwind base; /* think of as your CSS reset */
+@tailwind components; /* for your components */
+@tailwind utilities; /* most specific */
+
+@layer components {
+  .search-input {
+    @apply mb-5 block w-60;
+  }
+}
+
+@layer utilities {
+  .grayed-out-dirabled {
+    @apply disabled:opacity-50;
+  }
+}
