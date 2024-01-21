@@ -45,7 +45,13 @@ const SearchParams = () => {
         ) : null}
         <label htmlFor="location">
           Location
-          <input id="location" name="location" placeholder="Location" />
+          <input
+            type="text"
+            id="location"
+            name="location"
+            className="search-input"
+            placeholder="Location"
+          />
         </label>
 
         <label htmlFor="animal">
@@ -53,6 +59,7 @@ const SearchParams = () => {
           <select
             id="animal"
             name="animal"
+            className="search-input"
             onChange={(e) => {
               setAnimal(e.target.value);
             }}
@@ -71,7 +78,12 @@ const SearchParams = () => {
 
         <label htmlFor="breed">
           Breed
-          <select disabled={!breeds.length} id="breed" name="breed">
+          <select
+            disabled={!breeds.length}
+            className="search-input grayed-out-disabled"
+            id="breed"
+            name="breed"
+          >
             <option />
             {breeds.map((breed) => (
               <option key={breed} value={breed}>
@@ -81,7 +93,9 @@ const SearchParams = () => {
           </select>
         </label>
 
-        <button>Submit</button>
+        <button className="rounded bg-orange-500 px-6 py-2 text-white hover:opacity-50">
+          Submit
+        </button>
       </form>
       <Results pets={pets} />
     </div>
