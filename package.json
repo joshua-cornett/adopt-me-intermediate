@@ -1,18 +1,19 @@
 {
   "name": "ir-v5-project",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Intermediate React v5 project",
   "main": "index.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "version-prompt-file": "node -e \"const fs = require('fs'); const semver = require('semver'); const prompt = require('prompt'); const currentVersion = require('./package.json').version; prompt.start(); prompt.get({ properties: { version: { description: `Current version is ${currentVersion}. Enter the version (press Enter to keep current or specify major, minor, patch):` } } }, (err, result) => { const newVersion = semver.valid(result.version.trim()) || currentVersion; const versionFile = './temp-version.txt'; fs.writeFileSync(versionFile, newVersion); console.log(newVersion); })\"",
+    "update-version": "npm run version-prompt-file --ignore-scripts && node -e \"const fs = require('fs'); const semver = require('semver'); const currentVersion = require('./package.json').version; const versionFile = './temp-version.txt'; try { const newVersion = fs.readFileSync(versionFile, 'utf8').trim(); fs.unlinkSync(versionFile); require('fs').writeFileSync('./package.json', JSON.stringify(Object.assign(require('./package.json'), { version: newVersion }), null, 2)); } catch (error) { console.error('Error reading or deleting version file:', error); process.exit(1); }\"",
     "stage": "git add .",
-    "version-prompt": "node -e \"const semver = require('semver'); const prompt = require('prompt'); const currentVersion = require('./package.json').version; prompt.start(); prompt.get({ properties: { version: { description: `Current version is ${currentVersion}. Enter the version (press Enter to keep current or specify major, minor, patch):` } } }, (err, result) => { const newVersion = result.version.trim(); console.log(semver.valid(newVersion) ? newVersion : currentVersion); })\"",
     "cz": "npx git-cz",
-    "changelog": "auto-changelog && git add CHANGELOG.md",
-    "commit": "npm run stage && npm run version-prompt --ignore-scripts && node -e \"const semver = require('semver'); const currentVersion = require('./package.json').version; const newVersion = semver.valid(process.env.npm_package_prompt_version?.trim()) || currentVersion; require('fs').writeFileSync('./package.json', JSON.stringify(Object.assign(require('./package.json'), { version: newVersion }), null, 2));\" && npm run cz",
-    "release": "npm run changelog && git push",
+    "changelog": "auto-changelog && git add CHANGELOG.md && git commit --amend --no-edit",
+    "commit": "npm run update-version && npm run stage && npm run cz && npm run changelog ",
+    "release": "git push",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --quiet"
   },
@@ -37,7 +38,7 @@
     "vite": "^5.0.12"
   },
   "dependencies": {
-    "@tanstack/react-query": "5.17.15",
+    "@tanstack/react-query": "5.17.19",
     "auto-changelog": "^2.4.0",
     "prompt": "^1.3.0",
     "react": "18.2.0",
@@ -49,5 +50,11 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "auto-changelog": {
+    "output": "CHANGELOG.md",
+    "template": "keepachangelog",
+    "unreleased": true,
+    "commitLimit": false
   }
 }
